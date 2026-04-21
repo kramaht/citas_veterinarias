@@ -5,7 +5,6 @@ import os
 app = Flask(__name__)
 DATABASE = 'citas.db'
 
-
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
@@ -27,7 +26,6 @@ def init_db():
     conn.close()
 
 
-# ── AGENDA (ruta principal) ──────────────────────────────────────────────────
 @app.route('/')
 def agenda():
     conn = get_db()
@@ -36,7 +34,6 @@ def agenda():
     return render_template('agenda.html', citas=citas)
 
 
-# ── AGENDAR ──────────────────────────────────────────────────────────────────
 @app.route('/agendar', methods=['GET', 'POST'])
 def agendar():
     if request.method == 'POST':
@@ -54,8 +51,6 @@ def agendar():
         return redirect(url_for('agenda'))
     return render_template('agendar.html')
 
-
-# ── MODIFICAR ─────────────────────────────────────────────────────────────────
 @app.route('/modificar/<int:id>', methods=['GET', 'POST'])
 def modificar(id):
     conn = get_db()
@@ -76,8 +71,13 @@ def modificar(id):
     return render_template('modificar.html', cita=cita)
 
 
-
-
+@app.route('/cancelar/<int:id>', methods=['POST'])
+def cancelar(id):
+    conn = get_db()
+    conn.execute('DELETE FROM pacientes WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('agenda'))
 
 if __name__ == '__main__':
     init_db()
