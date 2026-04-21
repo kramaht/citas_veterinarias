@@ -55,35 +55,7 @@ def agendar():
     return render_template('agendar.html')
 
 
-# ── MODIFICAR ─────────────────────────────────────────────────────────────────
-@app.route('/modificar/<int:id>', methods=['GET', 'POST'])
-def modificar(id):
-    conn = get_db()
-    cita = conn.execute('SELECT * FROM pacientes WHERE id = ?', (id,)).fetchone()
-    if request.method == 'POST':
-        mascota    = request.form['mascota']
-        propietario = request.form['propietario']
-        especie    = request.form['especie']
-        fecha      = request.form['fecha']
-        conn.execute(
-            'UPDATE pacientes SET mascota=?, propietario=?, especie=?, fecha=? WHERE id=?',
-            (mascota, propietario, especie, fecha, id)
-        )
-        conn.commit()
-        conn.close()
-        return redirect(url_for('agenda'))
-    conn.close()
-    return render_template('modificar.html', cita=cita)
 
-
-# ── CANCELAR ──────────────────────────────────────────────────────────────────
-@app.route('/cancelar/<int:id>', methods=['POST'])
-def cancelar(id):
-    conn = get_db()
-    conn.execute('DELETE FROM pacientes WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('agenda'))
 
 
 if __name__ == '__main__':
